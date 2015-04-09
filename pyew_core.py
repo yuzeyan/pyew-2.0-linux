@@ -31,6 +31,10 @@ import pprint
 import urllib
 import operator
 import StringIO
+import datetime
+import httplib
+import json
+
 
 from gzip import GzipFile
 
@@ -217,6 +221,10 @@ class CPyew:
             if self.quitFlag:
                 break
         pass
+
+    def getcomment():
+        pass
+
 
     def __del__(self):
         if self.f:
