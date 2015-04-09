@@ -120,11 +120,12 @@ def checkBad(pyew, doprint=True):
     
     returls = []
     
-    url = "http://www.malware.com.br/cgi/submit?action=list_adblock"
+    url = "http://malwareurls.joxeankoret.com/normal.txt"
+    url2 = "https://easylist-downloads.adblockplus.org/malwaredomains_full.txt"
     try:
-        l = urllib.urlopen(url).readlines()
+        l = urllib.urlopen(url).readlines() + urllib.urlopen(url2).readlines()
     except:
-        print "***Error fetching URL list from www.malware.com.br:", sys.exc_info()[1]
+        print "***Error fetching URL list :", sys.exc_info()[1]
         return
 
     urls = urlExtract(pyew, doprint=False)
