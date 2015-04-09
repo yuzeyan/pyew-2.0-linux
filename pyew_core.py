@@ -209,21 +209,62 @@ class CPyew:
 
 
     def thread_UpdateComment(self):
+        
         while True:
+            md5_value = md5(pyew.getBuffer()).hexdigest()
             time.sleep(0.1)
             # update comment from DB server
-
-            # for example:
             self.customizeComment[1783] = '~test~'
-            self.customizeComment[1811] = '** Hello comment! **'
+            
+            data1 = self.customizeComment
+            res_read = http_post(md5,'','read')
+            if res_read not in [0,1,-1]:
+                data2 = json.loads(http_post(md5_value,'','read'))
+                merge_data = dict(data2, **data1)
+                self.customizeComment = merge_data
+                if not os.path.isdir('json/'):
+                    os.mkdir('json/')
+                with open('json/'+md5_value+'.json','wb') as f:
+                    f.write(repr(merge_data))
+                res_write = http_post(md5_value,merge_data,'write')
+                if res_write == '2':
+                    res_update=http_post(md5_value,merge_data,'update')
+            else:
+                res_write = http_post(md5_value,data1,'write')
+            
+            # for example:
+            #self.customizeComment[1783] = '~test~'
+            #self.customizeComment[1811] = '** Hello comment! **'
 
             # the commandline of mainframe loop quit
             if self.quitFlag:
                 break
         pass
 
-    def getcomment():
-        pass
+    def http_post(key,value,method):
+        host="10.255.16.124"
+        port=8080
+        path="/json/%s/" % method
+        param={"md5":key,"data":json.dumps(value)}
+        httpClient = None
+        try:
+            params = urllib.urlencode(param)
+            headers = {"Content-type": "application/x-www-form-urlencoded",
+                       "Accept": "text/plain",
+                       "User-Agent":"IE",
+                       "X-Requested-Accept": 'json'
+                      }
+         
+            httpClient = httplib.HTTPConnection(host, 8080, timeout=30)
+            httpClient.request("POST",path, params, headers)
+         
+            response = httpClient.getresponse()
+            return response.read()
+        except Exception, e:
+            print e
+        finally:
+            if httpClient:
+                httpClient.close()     
 
 
     def __del__(self):
